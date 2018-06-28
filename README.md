@@ -7,8 +7,8 @@ This is how i do it
    - Reflash dtbs in tx2 (Read it in rebuildkernel.sh)
        sudo ./flash.sh -r -k kernel-dtb jetson-tx2 mmcblk1p1    
 2. TC358743 
-   -Replace tc358743.c to kernel source
-   -Rebuild kernel and reflash kernel in tx2 (Read it in rebuildkernel.sh)
+   - Replace tc358743.c to kernel source
+   - Rebuild kernel and reflash kernel in tx2 (Read it in rebuildkernel.sh)
        sudo ./flash.sh jetson-tx2 mmcblk0p1    
 3. Test TC358743
    - run this command to see how it work
