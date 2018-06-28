@@ -1,0 +1,150 @@
+/*
+ * Copyright (c) 2015-2016, NVIDIA CORPORATION.  All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <t18x-common-modules/tegra186-camera-li-mipi-adpt-a00.dtsi>
+#include "dt-bindings/clock/tegra186-clock.h"
+
+/ {
+    host1x {
+        vi@15700000{
+            num-channels = <1>;
+            ports {
+                #address-cells = <1>;
+                #size-cells = <0>;
+                port@0 {
+                    status = "okay";
+                    reg = <0>;
+                    tc358743_vi_in0: endpoint {
+                        status = "okay";
+                        csi-port = <4>;  /* CSI-E */
+                        bus-width = <4>; /* Use CSI-EF only */
+                        remote-endpoint = <&tc358743_csi_out_0>;
+                    };
+                };
+            };
+        };
+        nvcsi@150c0000 {
+            status = "okay";
+            num-channels = <1>;
+            channel@0 {
+                status = "okay";
+                reg = <0>;
+                ports {
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+                    port@0 {
+                        status = "okay";
+                        reg = <0>;
+                        tc358743_csi_in_0: endpoint@0 {
+                            status = "okay";
+                            csi-port = <4>;
+                            bus-width = <4>;
+                            remote-endpoint = <&tc358743_hainh_out0>;
+                        };
+                    };
+                    port@1 {
+                        status = "okay";
+                        reg = <1>;
+                        tc358743_csi_out_0: endpoint@1 {
+                            status = "okay";
+                            remote-endpoint = <&tc358743_vi_in0>;
+                        };
+                    };
+                };
+            };
+        };
+    };
+        
+    i2c@c250000 {  /* I2C_PM, "adapter" 2 */
+        status = "okay";
+        tc358743_ef@0f {
+            status = "okay";
+            compatible = "tc358743";
+
+            reg = <0x0f>; /* (normal = address not shifted) */
+            mclk = "cam_mclk1";
+            /* reset-gpios = <&gpio 149 0>; */
+            refclk_hz = <27000000>;
+            /* Physical dimensions of sensor */
+            physical_w = "4.713";
+            physical_h = "3.494";
+            /* Sensor Model */
+            sensor_model ="tc358743";
+
+            ports {
+                #address-cells = <1>;
+                #size-cells = <0>;  
+                port@0 {
+                    reg = <0>;
+                    tc358743_hainh_out0: endpoint {
+                        csi-port = <4>;  /* CSI EF */
+                        bus-width = <4>; /* Use CSI-EF */
+                        data-lanes = <1 2 3 4>;
+                        clock-lanes = <0>;
+                        clock-noncontinuous;
+                        link-frequencies = /bits/ 64 <297000000>;
+                        remote-endpoint = <&tc358743_csi_in_0>;
+                    };
+                };
+            };
+        };
+        
+    };
+
+    tcp: tegra-camera-platform {
+        status = "okay";
+        compatible = "nvidia, tegra-camera-platform";
+
+        /**/
+        num_csi_lanes = <12>;
+        max_lane_speed = <1500000>;
+        min_bits_per_pixel = <16>;
+        vi_peak_byte_per_pixel = <3>;
+        vi_bw_margin_pct = <25>;
+        // max_pixel_rate = <200000>;
+        isp_peak_byte_per_pixel = <3>;
+        isp_bw_margin_pct = <25>;
+        
+        /**
+        * The general guideline for naming badge_info contains 3 parts, and is as follows,
+        * The first part is the camera_board_id for the module; if the module is in a FFD
+        * platform, then use the platform name for this part.
+        * The second part contains the position of the module, ex. “rear” or “front”.
+        * The third part contains the last 6 characters of a part number which is found
+        * in the module's specsheet from the vender.
+        */
+        modules {
+            module0 {
+                status = "okay";
+                badge = "tc358743_top_i2c2_ef";
+                position = "top";
+                orientation = "3";
+                drivernode0 {
+                    status = "okay";
+                    /* Declare PCL support driver (classically known as guid)  */
+                    pcl_id = "v4l2_sensor";
+                    /* Driver's v4l2 device name */
+                    devname = "tc358743 7-000f";
+                    /* Declare the device-tree hierarchy to driver instance */
+                    proc-device-tree = "/proc/device-tree/i2c@c250000/tc358743_ef@0f";
+                };
+            };
+        };
+    };
+};
+
