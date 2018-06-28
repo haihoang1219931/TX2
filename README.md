@@ -1,10 +1,10 @@
 # TX2
 This is how i do it
-1. USB 3.0
-   -Replace tegra186-quill-power-tree-p3310-1000-a00-00.dtsi in hardware/nvidia/platform/t18x/common/kernel-dts/t18x-common-platforms
-   -Rebuild dtbs and copy to $DEVDIR/kernel/dtb (Read it in rebuildkernel.sh)
+1. USB 3.0 on J120
+   - Replace tegra186-quill-power-tree-p3310-1000-a00-00.dtsi in hardware/nvidia/platform/t18x/common/kernel-dts/t18x-common-platforms
+   - Rebuild dtbs and copy to $DEVDIR/kernel/dtb (Read it in rebuildkernel.sh)
        cp $DEVDIR/images/arch/arm64/boot/dts/tegra186-quill-p3310-1000-c03-00-base.dtb $DEVDIR/kernel/dtb
-   -Reflash dtbs in tx2 (Read it in rebuildkernel.sh)
+   - Reflash dtbs in tx2 (Read it in rebuildkernel.sh)
        sudo ./flash.sh -r -k kernel-dtb jetson-tx2 mmcblk1p1    
 2. TC358743 
    -Replace tc358743.c to kernel source
