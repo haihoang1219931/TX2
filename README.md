@@ -1,5 +1,5 @@
 # TX2
-This is how i do it
+This is how to solve problem in jetson tx2
 1. USB 3.0 on J120
    - Replace tegra186-quill-power-tree-p3310-1000-a00-00.dtsi in hardware/nvidia/platform/t18x/common/kernel-dts/t18x-common-platforms
    - Rebuild dtbs and copy to $DEVDIR/kernel/dtb (Read it in rebuildkernel.sh)
